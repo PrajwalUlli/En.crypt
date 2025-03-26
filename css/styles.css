@@ -1,0 +1,64 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #000;
+  overflow: hidden;
+}
+
+.wf-force-outline-none[tabindex="-1"]:focus {
+  outline: none;
+}
+
+/* Binary matrix styling */
+.matrix-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  overflow: hidden;
+}
+
+.binary-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  font-family: Thirteen Pixel Fonts;
+  font-size: 15px;
+  overflow: hidden;
+  filter: blur(0.5px);
+  transition: filter 0.3s ease;
+}
+
+.binary-bit {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgba(8, 8, 8, 0);
+  opacity: 0;
+  transform: translate(-50%, -50%);
+}
+
+/* Enhanced blur layers */
+.blur-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  backdrop-filter: blur(3.5px);
+  z-index: 5;
+  opacity: 0.25;
+  mix-blend-mode: overlay;
+}
