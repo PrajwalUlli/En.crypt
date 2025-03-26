@@ -1,4 +1,3 @@
-/* filepath: d:\C Drive files\Downloads\delme\REDES\script.js */
 // Performance optimized matrix effect
 document.addEventListener("DOMContentLoaded", () => {
   const binaryOverlay = document.getElementById("binary-overlay");
