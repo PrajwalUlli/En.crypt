@@ -163,8 +163,8 @@
 
         // Optimized update function
         function updateBinaryOverlay(x, y) {
-          const maxDistance = 80; // Decreased from 100 to 80
-          const innerRadius = 35; // Decreased from 50 to 35
+          const maxDistance = 100; // Increased from 120 to 180
+          const innerRadius = 60; // Increased from 50 to 70
 
           // Only process bits that might be visible (optimization)
           const visibleArea = {
@@ -199,9 +199,9 @@
             if (distance < innerRadius) {
               // Reduced brightness inner circle
               bit.style.opacity = "1";
-              bit.style.color = "rgba(8, 8, 8, 0.5)"; // Reduced from 0.7 to 0.5
+              //   bit.style.color = "rgba(8, 8, 8, 0.3)"; // Reduced from 0.5 to 0.3
               //   uncomment this to show the center numbers too
-              //   bit.style.color = "rgba(255, 255, 255, 0.5)"; // Reduced from 0.7 to 0.5
+              bit.style.color = "rgba(255, 255, 255, 0.15)"; // Keeping reduced brightness
 
               // Rarely change these binary values
               if (Math.random() > 0.93) {
@@ -209,11 +209,12 @@
               }
             } else if (distance < maxDistance) {
               // Less visible outer ring with decreased brightness
-              const opacity = 0.35 - (distance - innerRadius) / 180; // Lower base opacity (0.35)
+              const opacity = 0.15 - (distance - innerRadius) / 400; // Increased divisor for smoother falloff with larger radius
 
-              if (opacity > 0.1) {
+              if (opacity > 0.05) {
+                // Keeping lower threshold
                 bit.style.opacity = "1";
-                bit.style.color = `rgba(220, 255, 220, ${opacity})`; // Kept the green tint
+                bit.style.color = `rgba(220, 255, 220, ${opacity})`; // Keeping decreased green tint opacity
               } else {
                 bit.style.opacity = "0";
               }
