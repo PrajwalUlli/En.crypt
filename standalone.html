@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html
+  data-wf-domain="spotlight-animation-85ac43.webflow.io"
+  data-wf-page="66b5fe125e28c179fd3de144"
+  data-wf-site="66b5fe125e28c179fd3de137"
+  class="w-mod-js"
+>
+  <head>
+    <link rel="icon" type="image/png" href="logo.png" />
+    <link href="https://fonts.cdnfonts.com/css/antikor-mono" rel="stylesheet" />
+    <link
+      href="https://db.onlinewebfonts.com/c/0a9c55380b7864dd0c077c40625434e1?family=Thirteen+Pixel+Fonts+Regular"
+      rel="stylesheet"
+    />
+
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        background-color: #000;
+        overflow: hidden;
+      }
+
+      .wf-force-outline-none[tabindex="-1"]:focus {
+        outline: none;
+      }
+
+      /* Binary matrix styling */
+      .matrix-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #000;
+        overflow: hidden;
+      }
+
+      .binary-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        font-family: "Thirteen Pixel Fonts Regular", monospace;
+        font-size: 15px;
+        overflow: hidden;
+        filter: blur(0.5px);
+        transition: filter 0.3s ease;
+      }
+
+      .binary-bit {
+        user-select: none;
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: rgba(8, 8, 8, 0);
+        opacity: 0;
+        transform: translate(-50%, -50%);
+      }
+
+      /* Enhanced blur layers */
+      .blur-layer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        backdrop-filter: blur(3.5px);
+        z-index: 5;
+        opacity: 0.25;
+        mix-blend-mode: overlay;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+      }
+
+      /* Navbar styling - with subtle glow and transparent background */
+      .navbar {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        position: fixed;
+        top: 20px;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background-color: rgba(0, 0, 0, 0); /* Slightly visible background */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 25px;
+        box-sizing: border-box;
+        z-index: 10;
+        max-width: 96%;
+        margin-left: 2%;
+        margin-right: 2%;
+        border-radius: 8px; /* Rounded corners */
+      }
+
+      .navbar-brand {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        font-size: 18px;
+        font-weight: bold;
+        font-family: "Antikor Mono", Courier, monospace;
+        color: rgba(220, 160, 80, 0.85); /* Warmer orange */
+        text-shadow: 0 0 8px rgba(220, 160, 80, 0.3); /* Softer glow */
+        letter-spacing: 1px;
+        background-color: transparent;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        padding: 8px 15px;
+        border-radius: 7px;
+        opacity: 0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .navbar-brand:hover {
+        text-shadow: 0 0 12px rgba(220, 160, 80, 0.5);
+        transform: translateY(-1px);
+      }
+
+      .navbar-brand::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0%;
+        height: 1px;
+        background-color: rgba(220, 160, 80, 0.6);
+        transition: width 0.4s ease;
+      }
+
+      .navbar-brand:hover::after {
+        width: 80%;
+      }
+
+      .navbar-tools {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        display: flex;
+        gap: 20px; /* Increased from 15px */
+      }
+
+      .tool-button {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        font-family: "Antikor Mono", Courier, monospace;
+        background-color: rgba(
+          20,
+          15,
+          10,
+          0.35
+        ); /* Slightly darker background */
+        color: rgba(220, 160, 80, 0.8); /* Warmer, softer text */
+        border: 1px solid rgba(180, 120, 60, 0.25); /* More subtle border */
+        border-radius: 7px; /* More rounded */
+        padding: 10px 18px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        text-shadow: 0 0 5px rgba(220, 160, 80, 0.2);
+        opacity: 0;
+        transform: translateY(10px);
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Add hover effects for navbar buttons */
+      .tool-button:hover {
+        background-color: rgba(35, 25, 15, 0.5);
+        border-color: rgba(220, 160, 80, 0.4);
+        color: rgba(240, 180, 100, 0.9);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .tool-button:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        transition: all 0.1s ease;
+      }
+
+      /* Add subtle glow effect on hover */
+      .tool-button::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+          circle at center,
+          rgba(220, 160, 80, 0.15),
+          transparent 70%
+        );
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+
+      .tool-button:hover::after {
+        opacity: 1;
+      }
+
+      /* Smoother, calming terminal styling */
+      .terminal-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 840px;
+        height: 520px;
+        background-color: rgba(
+          10,
+          10,
+          12,
+          0.85
+        ); /* Slightly darker, softer background */
+        border-radius: 14px; /* More rounded corners for softer feel */
+        border: 1px solid rgba(180, 120, 60, 0.2); /* Softer border color */
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5),
+          0 0 15px rgba(180, 120, 60, 0.12);
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        opacity: 0;
+        backdrop-filter: blur(8px);
+      }
+
+      .terminal-header {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        height: 38px;
+        background-color: rgba(15, 15, 18, 0.75); /* More transparent header */
+        border-bottom: 1px solid rgba(180, 120, 60, 0.15);
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+        user-select: none;
+      }
+
+      .terminal-buttons {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        display: flex;
+        gap: 10px;
+      }
+
+      .terminal-btn {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .terminal-btn.close {
+        background-color: rgba(255, 69, 0, 0.65);
+      }
+
+      .terminal-btn.minimize {
+        background-color: rgba(255, 165, 0, 0.65);
+      }
+
+      .terminal-btn.maximize {
+        background-color: rgba(50, 205, 50, 0.65);
+      }
+
+      .terminal-btn:hover {
+        transform: scale(1.1);
+        filter: brightness(1.2);
+      }
+
+      .terminal-title {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        flex-grow: 1;
+        text-align: center;
+        font-family: "Antikor Mono", Courier, monospace;
+        font-size: 15px;
+        color: rgba(220, 160, 80, 0.7); /* Warmer, softer orange */
+        letter-spacing: 1.2px;
+        text-shadow: 0 0 4px rgba(220, 160, 80, 0.15);
+      }
+
+      .terminal-body {
+        flex-grow: 1;
+        padding: 28px;
+        overflow-y: auto;
+        font-family: "Antikor Mono", Courier, monospace;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        background-image: linear-gradient(
+          to bottom,
+          rgba(8, 8, 10, 0.15),
+          rgba(12, 12, 15, 0.08)
+        );
+      }
+
+      .terminal-content {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .terminal-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .terminal-label {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        min-width: 105px;
+        color: rgba(220, 160, 80, 0.65); /* Softer label color */
+        font-size: 14px;
+        letter-spacing: 0.8px;
+        font-weight: 400;
+        text-shadow: 0 0 3px rgba(220, 160, 80, 0.08);
+      }
+
+      .terminal-button {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        background-color: rgba(25, 25, 25, 0.65);
+        border: 1px solid rgba(180, 120, 60, 0.25); /* Softer border */
+        color: rgba(220, 160, 80, 0.7); /* Warmer text */
+        padding: 9px 18px;
+        border-radius: 7px; /* More rounded */
+        font-family: "Antikor Mono", Courier, monospace;
+        font-size: 13px;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-shadow: 0 0 3px rgba(220, 160, 80, 0.12);
+      }
+
+      .terminal-button:hover {
+        background-color: rgba(35, 25, 15, 0.6);
+        border-color: rgba(220, 160, 80, 0.4);
+        color: rgba(240, 180, 100, 0.8);
+        text-shadow: 0 0 5px rgba(220, 160, 80, 0.25);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Softer input, textarea, and select styling */
+      .terminal-input,
+      .terminal-textarea,
+      .terminal-select {
+        background-color: rgba(12, 12, 14, 0.25);
+        border: 1px solid rgba(180, 120, 60, 0.25);
+        padding: 10px 14px;
+        color: rgba(255, 255, 255, 0.8);
+        font-family: "Antikor Mono", Courier, monospace;
+        font-size: 13px;
+        border-radius: 6px;
+        outline: none;
+        flex-grow: 1;
+        transition: all 0.3s ease;
+        user-select: text;
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+      }
+
+      .terminal-input::placeholder,
+      .terminal-textarea::placeholder,
+      .terminal-select::placeholder {
+        color: rgba(255, 255, 255, 0.35);
+      }
+
+      .terminal-input:focus,
+      .terminal-textarea:focus,
+      .terminal-select:focus {
+        border-color: rgba(220, 160, 80, 0.4);
+        box-shadow: 0 0 8px rgba(180, 120, 60, 0.2);
+        background-color: rgba(15, 15, 18, 0.35);
+      }
+
+      .terminal-select {
+        background-color: rgba(12, 12, 14, 0.25);
+        border: 1px solid rgba(180, 120, 60, 0.25);
+        padding: 10px 14px;
+        color: rgba(255, 255, 255, 0.8);
+        font-family: "Antikor Mono", Courier, monospace;
+        font-size: 13px;
+        border-radius: 6px;
+        outline: none;
+        flex-grow: 1;
+        transition: all 0.3s ease;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22rgba%28220%2C%20160%2C%2080%2C%200.7%29%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        padding-right: 40px;
+        user-select: text;
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+      }
+
+      .terminal-select:focus {
+        border-color: rgba(220, 160, 80, 0.4);
+        box-shadow: 0 0 8px rgba(180, 120, 60, 0.2);
+        background-color: rgba(15, 15, 18, 0.35);
+      }
+
+      .terminal-select option {
+        background-color: rgba(15, 15, 18, 0.95);
+        color: rgba(220, 160, 80, 0.85);
+        padding: 8px;
+      }
+
+      /* Style for disabled options */
+      .terminal-select option:disabled {
+        color: rgba(220, 160, 80, 0.4);
+        font-style: italic;
+      }
+
+      /* Ensure dropdown appearance is consistent across browsers */
+      .terminal-select::-ms-expand {
+        display: none;
+      }
+
+      /* Special styling for Firefox */
+      @-moz-document url-prefix() {
+        .terminal-select {
+          text-indent: 0.01px;
+          text-overflow: "";
+          padding-right: 40px;
+        }
+      }
+
+      /* Output area with softer colors */
+      .terminal-output {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        background-color: rgba(12, 12, 14, 0.3);
+        border: 1px solid rgba(180, 120, 60, 0.2);
+        padding: 14px;
+        width: 100%;
+        min-height: 100px;
+        max-height: 200px;
+        overflow-y: auto;
+        color: rgba(255, 255, 255, 0.75);
+        font-family: monospace;
+        border-radius: 6px;
+        box-sizing: border-box;
+        white-space: pre-wrap;
+        word-break: break-all;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        line-height: 1.5;
+      }
+
+      .terminal-output#output-text,
+      .terminal-output#file-output-text,
+      .terminal-output#hash-output {
+        user-select: text;
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+      }
+
+      /* Password toggle with softer styling */
+      .password-wrapper {
+        position: relative;
+        flex-grow: 1;
+        display: flex;
+      }
+
+      .password-toggle {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        color: rgba(255, 140, 0, 0.5);
+        font-size: 14px;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0.7;
+        transition: all 0.3s ease;
+      }
+
+      .password-toggle:hover {
+        color: rgba(255, 165, 0, 0.7);
+        opacity: 0.9;
+        text-shadow: 0 0 5px rgba(255, 140, 0, 0.2);
+      }
+
+      /* Add this to remove all scrollbars on the page */
+      html {
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+      }
+
+      html::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+      }
+
+      body::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* Make the copy button not transform on hover */
+      #copy-btn {
+        transform: none !important;
+      }
+      #copy-btn:hover {
+        transform: none !important;
+      }
+
+      /* Add user-select: none to all interface elements */
+      .navbar,
+      .navbar-brand,
+      .navbar-tools,
+      .tool-button,
+      .terminal-header,
+      .terminal-btn,
+      .terminal-buttons,
+      .terminal-title,
+      .terminal-label,
+      .terminal-button,
+      .blur-layer,
+      .terminal-output,
+      .password-toggle,
+      .status-text,
+      .progress-bar-container,
+      .progress-bar-fill {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+      }
+
+      /* Terminal input elements should remain selectable for user interaction */
+      .terminal-input,
+      .terminal-textarea,
+      .terminal-select,
+      .terminal-output#output-text,
+      .terminal-output#file-output-text,
+      .terminal-output#hash-output {
+        user-select: text;
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+      }
+    </style>
+    <meta charset="utf-8" />
+    <title>En.Crypt</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <!-- Added GSAP library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+  </head>
+  <body>
+    <!-- Added navbar -->
+    <nav class="navbar">
+      <div class="navbar-brand">En.Crypt</div>
+      <div class="navbar-tools">
+        <button class="tool-button">Text Encrypt</button>
+        <button class="tool-button">File Encrypt</button>
+        <button class="tool-button">Hash Reverse</button>
+      </div>
+    </nav>
+
+    <!-- Add this below the navbar but before the matrix container -->
+    <div class="terminal-container">
+      <div class="terminal-header">
+        <div class="terminal-buttons">
+          <span class="terminal-btn close"></span>
+          <span class="terminal-btn minimize"></span>
+          <span class="terminal-btn maximize"></span>
+        </div>
+        <div class="terminal-title">TEXT ENCRYPTION TERMINAL</div>
+      </div>
+      <div class="terminal-body">
+        <div class="terminal-content">
+          <div class="terminal-row">
+            <label class="terminal-label">ALGORITHM:</label>
+            <div class="terminal-select-wrapper">
+              <select class="terminal-select" id="encryption-algorithm">
+                <option value="aes">AES-256</option>
+                <option value="caesar">Caesar Cipher</option>
+                <option value="des" disabled>DES (Coming Soon)</option>
+                <option value="rsa" disabled>RSA (Coming Soon)</option>
+                <option value="blowfish" disabled>
+                  Blowfish (Coming Soon)
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="terminal-row">
+            <label class="terminal-label">KEY:</label>
+            <div class="password-wrapper">
+              <input
+                type="password"
+                class="terminal-input"
+                id="encryption-key"
+                placeholder="Enter encryption key..."
+              />
+              <button
+                class="password-toggle"
+                id="pwd-toggle"
+                aria-label="Show/hide password"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="terminal-row input-area">
+            <label class="terminal-label">INPUT:</label>
+            <textarea
+              class="terminal-textarea"
+              id="input-text"
+              placeholder="Enter text to encrypt..."
+            ></textarea>
+          </div>
+          <div class="terminal-row">
+            <button class="terminal-button" id="encrypt-btn">ENCRYPT</button>
+            <button class="terminal-button" id="decrypt-btn">DECRYPT</button>
+            <button class="terminal-button" id="clear-btn">CLEAR</button>
+          </div>
+          <div class="terminal-row output-area">
+            <label class="terminal-label">OUTPUT:</label>
+            <div style="position: relative; width: 100%">
+              <div class="terminal-output" id="output-text"></div>
+              <button
+                class="terminal-button"
+                id="copy-btn"
+                style="
+                  position: absolute;
+                  top: 6px;
+                  right: 6px;
+                  padding: 5px 8px;
+                  font-size: 11px;
+                  opacity: 0.8;
+                "
+              >
+                COPY
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="matrix-container">
+      <div class="binary-overlay" id="binary-overlay"></div>
+      <div class="blur-layer"></div>
+    </div>
+
+    <script>
+      // Performance optimized matrix effect
+      document.addEventListener("DOMContentLoaded", () => {
+        const binaryOverlay = document.getElementById("binary-overlay");
+        const container = document.querySelector(".matrix-container");
+        const navbarBrand = document.querySelector(".navbar-brand");
+        const toolButtons = document.querySelectorAll(".tool-button");
+        const terminal = document.querySelector(".terminal-container");
+
+        // Improved stutter-proof navbar animations with simultaneous brand and button appearance
+        function animateNavbar() {
+          // First, reset any inline styles that might cause conflicts
+          gsap.set([navbarBrand, toolButtons], { clearProps: "all" });
+
+          // Remove the transform from CSS by setting it explicitly with GSAP
+          // This avoids the conflict between CSS and GSAP animations
+          toolButtons.forEach((button) => {
+            button.style.transform = "translateY(10px)";
+          });
+
+          // Create a master timeline
+          const masterTl = gsap.timeline();
+
+          // Combined navbar animation - brand and buttons appear together
+          const navbarTl = gsap.timeline();
+
+          // Set initial states
+          navbarTl
+            .set(navbarBrand, {
+              opacity: 0,
+              y: -15,
+            })
+            .set(toolButtons, {
+              opacity: 0,
+              y: 10,
+            });
+
+          // Animate brand and buttons simultaneously
+          navbarTl.to([navbarBrand, toolButtons], {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "power1.out", // Simple easing with no bounce
+            stagger: {
+              from: "start",
+              amount: 0.15, // Small stagger for visual interest but still feels simultaneous
+            },
+          });
+
+          // Add glow effect on the logo after it appears
+          navbarTl.to(
+            navbarBrand,
+            {
+              textShadow:
+                "0 0 18px rgba(255, 140, 0, 0.8), 0 0 8px rgba(255, 120, 0, 0.6)",
+              duration: 0.4,
+              yoyo: true,
+              repeat: 1,
+            },
+            "-=0.2"
+          );
+
+          // Add the navbar animation to master timeline
+          masterTl.add(navbarTl);
+
+          // Add terminal animation AFTER navbar is fully animated
+          masterTl.add(() => {
+            // Animate terminal with a delay
+            gsap.fromTo(
+              terminal,
+              { opacity: 0, y: -20, scale: 0.95 },
+              {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: 0.7,
+                ease: "power2.out",
+              }
+            );
+          }, "+=0.3"); // Add a small delay after navbar animation completes
+
+          return masterTl;
+        }
+
+        let lastX = 0,
+          lastY = 0;
+        let activeBits = new Map(); // Track only visible bits
+        let allBits = [];
+        let ticking = false;
+        let mouseMoveTimeout = null;
+        let isIdle = false;
+
+        // Initialize binary overlay with optimized performance
+        function initBinaryMatrix() {
+          // Clear existing content
+          binaryOverlay.innerHTML = "";
+          activeBits.clear();
+          allBits = [];
+
+          // Get dimensions
+          const width = window.innerWidth;
+          const height = window.innerHeight;
+
+          // Calculate density - less bits for better performance
+          const binarySize = 30; // Increased for better performance
+          const cols = Math.ceil(width / binarySize);
+          const rows = Math.ceil(height / binarySize);
+
+          // Create binary digits with absolute positioning for better rendering
+          const fragment = document.createDocumentFragment();
+
+          for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+              const binaryBit = document.createElement("div");
+              binaryBit.classList.add("binary-bit");
+              binaryBit.textContent = Math.random() > 0.5 ? "1" : "0";
+
+              // Use absolute positioning - significant performance boost
+              binaryBit.style.left = col * binarySize + binarySize / 2 + "px";
+              binaryBit.style.top = row * binarySize + binarySize / 2 + "px";
+
+              // Store coordinates for faster distance calculation
+              binaryBit.x = col * binarySize + binarySize / 2;
+              binaryBit.y = row * binarySize + binarySize / 2;
+
+              fragment.appendChild(binaryBit);
+              allBits.push(binaryBit);
+            }
+          }
+
+          binaryOverlay.appendChild(fragment);
+
+          // Trigger navbar animation after matrix is initialized - start sooner
+          setTimeout(animateNavbar, 200); // Quick start
+        }
+
+        // Initialize matrix
+        initBinaryMatrix();
+
+        // Handle window resize with debouncing
+        let resizeTimer;
+        window.addEventListener("resize", () => {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(() => {
+            initBinaryMatrix();
+          }, 250); // Debounce resize events
+        });
+
+        // Add mouse movement tracking with throttling
+        document.addEventListener("mousemove", (e) => {
+          lastX = e.clientX;
+          lastY = e.clientY;
+
+          // Reset idle state when mouse moves
+          isIdle = false;
+
+          // Clear previous timeout
+          if (mouseMoveTimeout) {
+            clearTimeout(mouseMoveTimeout);
+          }
+
+          // Set timeout to fade out matrix after 3 seconds of no movement
+          mouseMoveTimeout = setTimeout(() => {
+            isIdle = true;
+            fadeOutMatrix();
+          }, 1500); // Changed from 3000 to 1500 milliseconds (1.5 seconds)
+
+          if (!ticking) {
+            window.requestAnimationFrame(() => {
+              updateBinaryOverlay(lastX, lastY);
+              ticking = false;
+            });
+            ticking = true;
+          }
+        });
+
+        // Function to fade out matrix when idle
+        function fadeOutMatrix() {
+          if (!isIdle) return;
+
+          // Gradually fade out all visible bits
+          const visibleBits = allBits.filter(
+            (bit) => bit.style.opacity !== "0"
+          );
+
+          if (visibleBits.length > 0) {
+            // Use GSAP for smooth fade out
+            gsap.to(visibleBits, {
+              opacity: 0,
+              duration: 1.5,
+              ease: "power2.out",
+              stagger: {
+                from: "random",
+                amount: 0.8,
+              },
+            });
+          }
+        }
+
+        // Optimized update function
+        function updateBinaryOverlay(x, y) {
+          // If we're in idle state, cancel the update
+          if (isIdle) return;
+
+          const maxDistance = 100; // Increased from 120 to 180
+          const innerRadius = 60; // Increased from 50 to 70
+
+          // Only process bits that might be visible (optimization)
+          const visibleArea = {
+            left: x - maxDistance,
+            right: x + maxDistance,
+            top: y - maxDistance,
+            bottom: y + maxDistance,
+          };
+
+          // Update active bits
+          for (let i = 0; i < allBits.length; i++) {
+            const bit = allBits[i];
+
+            // Skip bits far outside the visible area
+            if (
+              bit.x < visibleArea.left ||
+              bit.x > visibleArea.right ||
+              bit.y < visibleArea.top ||
+              bit.y > visibleArea.bottom
+            ) {
+              if (bit.style.opacity !== "0") {
+                bit.style.opacity = "0";
+              }
+              continue;
+            }
+
+            // Fast distance calculation using pre-stored coordinates
+            const dx = bit.x - x;
+            const dy = bit.y - y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < innerRadius) {
+              // Reduced brightness inner circle
+              bit.style.opacity = "1";
+              bit.style.color = "rgba(255, 255, 255, 0.18)"; // Slightly increased brightness
+
+              // Rarely change these binary values
+              if (Math.random() > 0.93) {
+                bit.textContent = Math.random() > 0.5 ? "1" : "0";
+              }
+            } else if (distance < maxDistance) {
+              // Less visible outer ring with decreased brightness
+              const opacity = 0.18 - (distance - innerRadius) / 400; // Increased base opacity
+
+              if (opacity > 0.05) {
+                bit.style.opacity = "1";
+                bit.style.color = `rgba(255, 230, 190, ${opacity})`; /* Brighter orange tint */
+              } else {
+                bit.style.opacity = "0";
+              }
+            } else if (bit.style.opacity !== "0") {
+              bit.style.opacity = "0";
+            }
+          }
+        }
+      });
+
+      // Add this to the end of your script section
+
+      // Terminal UI handling
+      document.addEventListener("DOMContentLoaded", function () {
+        // Animate terminal appearance
+        const terminal = document.querySelector(".terminal-container");
+        const textEncryptBtn = document.querySelectorAll(".tool-button")[0];
+        const fileEncryptBtn = document.querySelectorAll(".tool-button")[1];
+        const hashReverseBtn = document.querySelectorAll(".tool-button")[2];
+
+        // Store the current terminal content for text encryption
+        const textEncryptContent = `
+          <div class="terminal-row">
+            <label class="terminal-label">ALGORITHM:</label>
+            <div class="terminal-select-wrapper">
+              <select class="terminal-select" id="encryption-algorithm">
+                <option value="aes">AES-256</option>
+                <option value="caesar">Caesar Cipher</option>
+                <option value="des" disabled>DES (Coming Soon)</option>
+                <option value="rsa" disabled>RSA (Coming Soon)</option>
+                <option value="blowfish" disabled>Blowfish (Coming Soon)</option>
+              </select>
+            </div>
+          </div>
+          <div class="terminal-row">
+            <label class="terminal-label">KEY:</label>
+            <div class="password-wrapper">
+              <input
+                type="password"
+                class="terminal-input"
+                id="encryption-key"
+                placeholder="Enter encryption key..."
+              />
+              <button
+                class="password-toggle"
+                id="pwd-toggle"
+                aria-label="Show/hide password"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="terminal-row input-area">
+            <label class="terminal-label">INPUT:</label>
+            <textarea
+              class="terminal-textarea"
+              id="input-text"
+              placeholder="Enter text to encrypt..."
+            ></textarea>
+          </div>
+          <div class="terminal-row">
+            <button class="terminal-button" id="encrypt-btn">ENCRYPT</button>
+            <button class="terminal-button" id="decrypt-btn">DECRYPT</button>
+            <button class="terminal-button" id="clear-btn">CLEAR</button>
+          </div>
+          <div class="terminal-row output-area">
+            <label class="terminal-label">OUTPUT:</label>
+            <div style="position: relative; width: 100%">
+              <div class="terminal-output" id="output-text"></div>
+              <button 
+                class="terminal-button" 
+                id="copy-btn" 
+                style="position: absolute; top: 6px; right: 6px; padding: 5px 8px; font-size: 11px; opacity: 0.8;"
+              >
+                COPY
+              </button>
+            </div>
+          </div>
+        `;
+
+        // Replace the file encryption content structure in the script section
+        const fileEncryptContent = `
+          <div class="terminal-row">
+            <label class="terminal-label">ALGORITHM:</label>
+            <div class="terminal-select-wrapper">
+              <select class="terminal-select" id="file-encryption-algorithm">
+                <option value="aes">AES-256</option>
+                <option value="pgp" disabled>PGP/GPG (Coming Soon)</option>
+                <option value="zip" disabled>ZIP (AES) (Coming Soon)</option>
+                <option value="7zip" disabled>7-Zip (AES) (Coming Soon)</option>
+              </select>
+            </div>
+          </div>
+          <div class="terminal-row">
+            <label class="terminal-label">KEY:</label>
+            <div class="password-wrapper">
+              <input
+                type="password"
+                class="terminal-input"
+                id="file-encryption-key"
+                placeholder="Enter encryption key..."
+              />
+              <button
+                class="password-toggle"
+                id="file-pwd-toggle"
+                aria-label="Show/hide password"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="terminal-row">
+            <label class="terminal-label">FILE:</label>
+            <div style="flex-grow: 1; display: flex; align-items: center; gap: 10px;">
+              <input
+                type="text"
+                class="terminal-input"
+                id="file-path"
+                placeholder="Selected file path..."
+                style="flex-grow: 1;"
+              />
+              <input type="file" id="file-input" style="display: none;" />
+              <button class="terminal-button" id="browse-btn">BROWSE</button>
+            </div>
+          </div>
+          <div class="terminal-row" style="justify-content: flex-start; gap: 10px;">
+            <button class="terminal-button" id="file-encrypt-btn">ENCRYPT</button>
+            <button class="terminal-button" id="file-decrypt-btn">DECRYPT</button>
+            <button class="terminal-button" id="file-clear-btn">CLEAR</button>
+          </div>
+          <div class="terminal-row output-area" style="display: block;">
+            <label class="terminal-label">STATUS:</label>
+            <div class="terminal-output" id="file-output-text" style="max-height: 120px; width: 100%;"></div>
+            <button class="terminal-button" id="file-download-btn" style="display: none; background-color: rgba(20, 40, 20, 0.8); width: 100%; margin-top: 10px;">DOWNLOAD FILE</button>
+          </div>
+        `;
+
+        // Create hash reverse content
+        const hashReverseContent = `
+          <div class="terminal-row">
+            <label class="terminal-label">HASH TYPE:</label>
+            <div class="terminal-select-wrapper">
+              <select class="terminal-select" id="hash-type">
+                <option value="md5">MD5</option>
+                <option value="sha1">SHA1</option>
+                <option value="sha256">SHA256</option>
+                <option value="ntlm" disabled>NTLM (Coming Soon)</option>
+                <option value="bcrypt" disabled>bcrypt (Coming Soon)</option>
+              </select>
+            </div>
+          </div>
+          <div class="terminal-row input-area">
+            <label class="terminal-label">HASH INPUT:</label>
+            <textarea
+              class="terminal-textarea"
+              id="hash-input"
+              placeholder="Enter hash to crack..."></textarea>
+          </div>
+          <div class="terminal-row">
+            <label class="terminal-label">DICTIONARY:</label>
+            <div style="flex-grow: 1; display: flex; align-items: center; gap: 10px;">
+              <input
+                type="text"
+                class="terminal-input"
+                id="dictionary-path"
+                placeholder="Selected dictionary file or wordlist..."
+                style="flex-grow: 1;"
+              />
+              <input type="file" id="dictionary-file" style="display: none;" />
+              <button class="terminal-button" id="browse-dict-btn">BROWSE</button>
+            </div>
+          </div>
+          <div class="terminal-row" style="justify-content: flex-start; gap: 10px;">
+            <button class="terminal-button" id="crack-btn">CRACK HASH</button>
+            <button class="terminal-button" id="hash-clear-btn">CLEAR</button>
+          </div>
+          <div class="terminal-row output-area">
+            <label class="terminal-label">RESULT:</label>
+            <div class="terminal-output" id="hash-output"></div>
+          </div>
+        `;
+
+        // Button handlers for switching interfaces
+        textEncryptBtn.addEventListener("click", () => {
+          gsap.to(".terminal-content", {
+            opacity: 0,
+            y: 10,
+            duration: 0.3,
+            onComplete: () => {
+              document.querySelector(".terminal-content").innerHTML =
+                textEncryptContent;
+              document.querySelector(".terminal-title").textContent =
+                "TEXT ENCRYPTION TERMINAL";
+
+              // Reinitialize event listeners for the text encryption interface
+              initTextEncryptListeners();
+
+              gsap.fromTo(
+                ".terminal-content",
+                { opacity: 0, y: -10 },
+                { opacity: 1, y: 0, duration: 0.3 }
+              );
+            },
+          });
+        });
+
+        fileEncryptBtn.addEventListener("click", () => {
+          gsap.to(".terminal-content", {
+            opacity: 0,
+            y: 10,
+            duration: 0.3,
+            onComplete: () => {
+              document.querySelector(".terminal-content").innerHTML =
+                fileEncryptContent;
+              document.querySelector(".terminal-title").textContent =
+                "FILE ENCRYPTION TERMINAL";
+
+              // Initialize event listeners for file encryption interface
+              initFileEncryptListeners();
+
+              gsap.fromTo(
+                ".terminal-content",
+                { opacity: 0, y: -10 },
+                { opacity: 1, y: 0, duration: 0.3 }
+              );
+            },
+          });
+        });
+
+        hashReverseBtn.addEventListener("click", () => {
+          gsap.to(".terminal-content", {
+            opacity: 0,
+            y: 10,
+            duration: 0.3,
+            onComplete: () => {
+              document.querySelector(".terminal-content").innerHTML =
+                hashReverseContent;
+              document.querySelector(".terminal-title").textContent =
+                "HASH REVERSE TERMINAL";
+
+              // Initialize event listeners for hash reverse interface
+              initHashReverseListeners();
+
+              gsap.fromTo(
+                ".terminal-content",
+                { opacity: 0, y: -10 },
+                { opacity: 1, y: 0, duration: 0.3 }
+              );
+            },
+          });
+        });
+
+        // Initialize the text encryption interface on load
+        initTextEncryptListeners();
+
+        // Terminal close button functionality
+        document
+          .querySelector(".terminal-btn.close")
+          .addEventListener("click", () => {
+            gsap.to(terminal, {
+              opacity: 0,
+              y: 20,
+              scale: 0.95,
+              duration: 0.5,
+              onComplete: () => {
+                terminal.style.display = "none";
+              },
+            });
+          });
+
+        // Add event listeners to navbar buttons and brand name to show the terminal
+        document
+          .querySelector(".navbar-brand")
+          .addEventListener("click", () => {
+            showTerminal();
+          });
+
+        document.querySelectorAll(".tool-button").forEach((button) => {
+          button.addEventListener("click", () => {
+            // First show the terminal if it's hidden
+            if (terminal.style.display === "none") {
+              showTerminal();
+              // Wait a bit for the animation to complete before changing content
+              setTimeout(() => {
+                // The existing click event will handle the content change
+              }, 300);
+            }
+          });
+        });
+
+        // Function to show the terminal window
+        function showTerminal() {
+          const terminal = document.querySelector(".terminal-container");
+          terminal.style.display = "flex";
+          gsap.fromTo(
+            terminal,
+            { opacity: 0, y: 20, scale: 0.95 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "power2.out" }
+          );
+        }
+      });
+    </script>
+  </body>
+</html>
