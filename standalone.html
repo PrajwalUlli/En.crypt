@@ -6,7 +6,7 @@
   class="w-mod-js"
 >
   <head>
-    <link rel="icon" type="image/png" href="logo.png" />
+    <link rel="icon" type="image/png" href="logo_1.png" />
     <link href="https://fonts.cdnfonts.com/css/antikor-mono" rel="stylesheet" />
     <link
       href="https://db.onlinewebfonts.com/c/0a9c55380b7864dd0c077c40625434e1?family=Thirteen+Pixel+Fonts+Regular"
@@ -1506,7 +1506,9 @@
           }
 
           // Browse button opens file dialog
-          browseBtn.addEventListener("click", () => {});
+          browseBtn.addEventListener("click", () => {
+            fileInput.click();
+          });
 
           // Handle file selection
           fileInput.addEventListener("change", function (e) {
