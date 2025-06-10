@@ -1,1 +1,1 @@
-![Snippetree Logo](https://github.com/PrajwalUlli/En.crypt/blob/main/logo.png) Encrypt
+<img src="banner.png" alt="Snippetree Logo" width="20"> # Encrypt
